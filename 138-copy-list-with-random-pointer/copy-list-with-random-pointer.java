@@ -15,24 +15,36 @@ class Node {
 
 class Solution {
     public Node copyRandomList(Node head) {
-        HashMap<Node,Node> map = new HashMap();
         
         Node temp = head;
+        //Creation of deepCopyNodes and placing it just after the original nodes
         while(temp != null){
             Node newNode = new Node(temp.val);
-            map.put(temp,newNode);
-            temp = temp.next;
+            newNode.next = temp.next;
+            temp.next = newNode;
+            temp = temp.next.next;
         }
-        
+        //Linking of Random pointers in deepCopyNodes
         temp = head;
         while(temp != null){
-            Node deepNode = map.get(temp);
-            Node originalNode = temp;
-            deepNode.next = map.get(temp.next);
-            deepNode.random = map.get(temp.random);
-            temp = temp.next;
+            if(temp.random != null){
+                temp.next.random = temp.random.next;
+            }
+            
+            temp = temp.next.next;
         }
         
-        return map.get(head);
+        //Removal of next pointer connection between deep and original
+        temp = head;
+        Node dummy = new Node(-1);
+        Node curr = dummy;
+        while(temp != null){
+            Node front = temp.next.next;
+            curr.next = temp.next;
+            temp.next = front;
+            curr = curr.next;
+            temp = front;
+        }
+        return dummy.next;
     }
 }
